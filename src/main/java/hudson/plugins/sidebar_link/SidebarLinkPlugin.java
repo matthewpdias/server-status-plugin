@@ -51,7 +51,7 @@ public class SidebarLinkPlugin extends Plugin {
     private List<LinkAction> links = new ArrayList<LinkAction>();
 
     // From older versions
-    @Deprecated private transient String url, text, icon;
+    @Deprecated private transient String url, text;
 
     @Override public void start() throws Exception {
 	load();
@@ -72,7 +72,7 @@ public class SidebarLinkPlugin extends Plugin {
     private Object readResolve() {
 	// Upgrade config from older version
 	if (url != null && url.length() > 0) {
-	    links.add(new LinkAction(url, text, icon));
+	    links.add(new LinkAction(url, text));
 	}
 	return this;
     }

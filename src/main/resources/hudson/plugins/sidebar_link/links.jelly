@@ -10,9 +10,6 @@
       <f:entry title="${%Link Text}">
         <f:textbox name="displayName" value="${link.displayName}"/>
       </f:entry>
-      <f:entry title="${%Link Icon}" help="/plugin/sidebar-link/help-icon.html">
-        <f:textbox name="iconFileName" value="${link.iconFileName}"/>
-      </f:entry>
       <f:entry><f:repeatableDeleteButton/></f:entry>
     </table>
   </f:repeatable>

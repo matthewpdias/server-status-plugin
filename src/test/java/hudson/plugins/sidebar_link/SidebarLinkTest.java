@@ -71,11 +71,11 @@ public class SidebarLinkTest {
     }
 
     public class SidebarLinkTestAction extends LinkAction {
-        public SidebarLinkTestAction(String name) { super(name, "test", null); }
+        public SidebarLinkTestAction(String name) { super(name, "test"); }
         public void doDynamic(StaplerRequest req, StaplerResponse rsp) throws Exception {
             JSONObject formData = new JSONObject();
             formData.put("links", JSONObject.fromObject(
-                new LinkAction("http://test.com/test", "Test Link", "test.gif")));
+                new LinkAction("http://test.com/test", "Test Link")));
             j.jenkins.getPlugin(SidebarLinkPlugin.class).configure(req, formData);
             rsp.setContentType("text/html");
             rsp.getOutputStream().close();

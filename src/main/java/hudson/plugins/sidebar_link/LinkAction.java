@@ -40,7 +40,7 @@ import org.kohsuke.stapler.StaplerRequest;
  * @author Alan Harder
  */
 public class LinkAction implements Action {
-    private final String url, text, icon;
+    private final String url, text;
     
     /**
      * Caches the fact that the URL is safe or not.
@@ -50,7 +50,7 @@ public class LinkAction implements Action {
     private transient Boolean isSafe = null;
 
     @DataBoundConstructor
-    public LinkAction(String urlName, String displayName, String iconFileName) throws IllegalArgumentException {
+    public LinkAction(String urlName, String displayName ) throws IllegalArgumentException {
         // Validate URL before proceeding
         FormValidation validationResult = LinkProtection.verifyUrl(urlName);
         if(validationResult.kind == FormValidation.Kind.ERROR) {
@@ -58,8 +58,7 @@ public class LinkAction implements Action {
         }
         
         this.url = urlName;
-	this.text = displayName;
-	this.icon = iconFileName;
+	    this.text = displayName + "SIDEBAR_SERVER_STATUS";
     }
 
     public String getUrlName() {
@@ -71,7 +70,7 @@ public class LinkAction implements Action {
     }
     
     public String getDisplayName() { return text; }
-    public String getIconFileName() { return icon; }
+    public String getIconFileName() { return "new-computer.png"; }
     
     @Restricted(NoExternalUse.class)
     public String getUnprotectedUrlName() {

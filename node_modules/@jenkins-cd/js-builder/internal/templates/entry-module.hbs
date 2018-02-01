@@ -1,0 +1,126 @@
+var ___$$$___jsModules = require('@jenkins-cd/js-modules');
+
+if (!window.jenkinsCIGlobal) {
+    window.jenkinsCIGlobal = {};
+}
+if (!window.jenkinsCIGlobal._internal) {
+    window.jenkinsCIGlobal._internal = {};
+}
+
+var whoami = '{{#if bundle.bundleExportNamespace}}{{bundle.bundleExportNamespace}}:{{/if}}{{bundle.as}}';
+var loadTimestamp = Date.now();
+
+___$$$___jsModules.whoami(whoami);
+
+// Clear out the session storage if this is the first
+// bundle to export on the page.
+var trackKeyPrefix = 'jenkins-cd/js-modules/tracking/';
+if (window.sessionStorage && !jenkinsCIGlobal._internal.bundleLoadIdx) {
+    jenkinsCIGlobal._internal.bundleLoadIdx = 0;
+    var toRemove = [];
+    for (var i = 0; i < sessionStorage.length; i++) {
+        var key = sessionStorage.key(i);
+        if (key.indexOf(trackKeyPrefix) === 0) {
+            toRemove.push(key);
+        }
+    }
+    for (var i = 0; i < toRemove.length; i++) {
+        sessionStorage.removeItem(toRemove[i]);
+    }
+}
+jenkinsCIGlobal._internal.bundleLoadIdx++;
+
+if (window.sessionStorage) {
+    sessionStorage.setItem(trackKeyPrefix + 'load:' + whoami, JSON.stringify({
+        event: 'load',
+        bundleId: whoami,
+        bundlePath: '{{bundle.bundleInDir}}/{{bundle.bundleOutputFile}}',
+        at: loadTimestamp,
+        loadIdx: jenkinsCIGlobal._internal.bundleLoadIdx
+    }));
+}
+
+function ___$$$___doExport(namespace, moduleName, module) {
+    var exportedModuleId = (namespace !== undefined ? (namespace + ':' + moduleName) : moduleName);
+    try {
+        ___$$$___jsModules.requireModule(exportedModuleId);
+        // No exception => already exported. Shouldn't happen, but okay !!
+        return;
+    } catch (e) {
+        // Not exported yet, hence exception on require. Okay to export !!
+        ___$$$___jsModules.exportModule(namespace, moduleName, module);
+        if (window.sessionStorage) {
+            sessionStorage.setItem(trackKeyPrefix + 'export:' + exportedModuleId, JSON.stringify({
+                event: 'export',
+                moduleId: exportedModuleId,
+                at: loadTimestamp,
+                bundleId: whoami
+            }));
+        }
+    }
+}
+
+/*** Start Module Exec Function ***************************************/
+function ___$$$___exec(onExec) {
+    {{content}}
+    {{#if bundle.doOnExecCall}}onExec(exports);{{/if}}
+}
+/*** End Module Exec Function   ***************************************/
+
+function ___$$$___doExports(module) {
+    // Do exports, if any ....
+    function doDependencyExport(module, normalizedPackageName, jsModuleNames) {
+        ___$$$___doExport(normalizedPackageName, jsModuleNames.patch, module);
+        ___$$$___doExport(normalizedPackageName, jsModuleNames.minor, module);
+        ___$$$___doExport(normalizedPackageName, jsModuleNames.major, module);
+        ___$$$___doExport(normalizedPackageName, jsModuleNames.any, module);
+    }
+
+    {{#if entryExport}}
+    ___$$$___doExport({{entryExport.namespace}}, '{{bundle.as}}', {{entryExport.module}});
+
+    doDependencyExport(module, '{{entryExport.normalizedPackageName}}', {
+        patch: '{{entryExport.version.patch}}',
+        minor: '{{entryExport.version.minor}}',
+        major: '{{entryExport.version.major}}',
+        any: '{{entryExport.version.any}}'
+    });
+    {{/if}}
+
+    {{#if dependencyExports}}
+        {{#each dependencyExports}}
+        doDependencyExport(require('{{packageName}}'), '{{normalizedPackageName}}', {
+            patch: '{{jsModuleNames.patch}}',
+            minor: '{{jsModuleNames.minor}}',
+            major: '{{jsModuleNames.major}}',
+            any: '{{jsModuleNames.any}}'
+        });
+        {{/each}}
+    {{/if}}
+}
+
+function ___$$$___doCSS() {
+    {{#each css}}
+    ___$$$___jsModules.addModuleCSSToPage('{{namespace}}', '{{getLoadBundleName}}');
+    {{/each}}
+}
+
+function ___$$$___doBundleInit() {
+    try {
+        ___$$$___exec(function(module) {
+            ___$$$___doExports(module);
+            ___$$$___doCSS();
+        });
+    } catch (e) {
+        console.error('Error initializing Jenkins JavaScript bundle "{{bundle.as}}"', e);
+    }
+}
+
+if (___$$$___requiredModuleMappings.length > 0) {
+    ___$$$___jsModules.importModule.apply(___$$$___jsModules.importModule, ___$$$___requiredModuleMappings)
+        .onFulfilled(function() {
+        ___$$$___doBundleInit();
+    });
+} else {
+    ___$$$___doBundleInit();
+}

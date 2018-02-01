@@ -1,0 +1,26 @@
+{
+  "name": "server-status-plugin",
+  "version": "1.0.0",
+  "description": "node package to help with server status plugin",
+  "main": "index.js",
+  "scripts": {
+    "test": "gulp test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/matthewpdias/server-status-plugin.git"
+  },
+  "author": "matthewpdias",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/matthewpdias/server-status-plugin/issues"
+  },
+  "homepage": "https://github.com/matthewpdias/server-status-plugin#readme",
+  "devDependencies": {
+    "@jenkins-cd/js-builder": "0.0.62",
+    "gulp": "^3.9.1"
+  },
+  "dependencies": {
+    "jquery": "^3.3.1"
+  }
+}
