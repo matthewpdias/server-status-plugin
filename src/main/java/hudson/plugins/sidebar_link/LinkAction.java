@@ -56,9 +56,9 @@ public class LinkAction implements Action {
         if(validationResult.kind == FormValidation.Kind.ERROR) {
             throw new IllegalArgumentException(validationResult);
         }
-        
+
         this.url = urlName;
-	    this.text = displayName + "SIDEBAR_SERVER_STATUS";
+	    this.text = displayName;
     }
 
     public String getUrlName() {
@@ -71,7 +71,8 @@ public class LinkAction implements Action {
     
     public String getDisplayName() { return text; }
     public String getIconFileName() { return "new-computer.png"; }
-    
+    public String getJavascript() { return "\"<script type=\"text/javascript\" src=\"${rootURL}/plugin/server-status-plugin/Script.js\"></script>\""; }
+
     @Restricted(NoExternalUse.class)
     public String getUnprotectedUrlName() {
         return url;

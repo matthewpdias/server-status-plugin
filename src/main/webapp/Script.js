@@ -1,23 +1,25 @@
-var goodImage = "${rootURL}/plugin/server-status-plugin/images/greenball.png"
-var badImage = "${rootURL}/plugin/server-status-plugin/images/greenball.png"
-
-var newImage = document.createElement("IMG")
-
-var tasks = document.getElementsByClassName("task-link")
-
-var xhr = new XMLHttpRequest();
+var tasks = document.getElementsByClassName("server-status-link");
+var goodImage = document.createElement("IMG")
+var badImage = document.createElement("IMG")
+var taskList = Array.from(tasks);
 
 
-for (var i = 0; i < tasks.length; i++) {
-    if (tasks[i].textContent.match("SIDEBAR_SERVER_STATUS")) {
-        tasks[i].textContent = tasks[i].textContent.replace("SIDEBAR_SERVER_STATUS", " ");
-        xhr.open('GET', tasks[i].href, false);
-        xhr.send;
-        if (xhr.readyState == 4 && xhr.status == 200) {
-            newImage.src = goodImage;
-        } else {
-            newImage.src = badImage;
-        }
-        tasks[i].appendChild(newImage);
-    }
-}
+taskList.forEach(function(task, index) {
+
+  var xhr = new XMLHttpRequest();
+  var parent = task;
+  xhr.open("GET", task.href, true);
+  xhr.onreadystatechange = function (e) {
+
+  if (xhr.status === 200) {
+    goodImage.src = `https://img.shields.io/badge/${parent.href}-online-brightgreen.svg`
+    parent.appendChild(goodImage);
+    console.log("SUCCESSFUL CONNECTION");
+  } else {
+    badImage.src = `https://img.shields.io/badge/${parent.href}-offline-red.svg`
+    parent.appendChild(badImage);
+    console.log("COULD NOT CONNECT");
+  }};
+  xhr.send(null);
+
+});
