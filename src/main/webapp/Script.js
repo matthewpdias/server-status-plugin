@@ -1,25 +1,25 @@
-var tasks = document.getElementsByClassName("server-status-link");
-var goodImage = document.createElement("IMG")
-var badImage = document.createElement("IMG")
-var taskList = Array.from(tasks);
+var tasks_col = document.getElementsByClassName("server-status-link");
 
+var tasks = Array.from(tasks_col);
 
-taskList.forEach(function(task, index) {
+tasks.forEach(function(task) {
+    var goodImage = document.createElement("IMG");
+    var badImage = document.createElement("IMG");
+    var xhr = new XMLHttpRequest();
+    var displayName = task.firstChild.textContent;
 
-  var xhr = new XMLHttpRequest();
-  var parent = task;
-  xhr.open("GET", task.href, true);
-  xhr.onreadystatechange = function (e) {
+    xhr.open("GET", task.href, true);
+    xhr.onreadystatechange = function (e) {
 
-  if (xhr.status === 200) {
-    goodImage.src = `https://img.shields.io/badge/${parent.href}-online-brightgreen.svg`
-    parent.appendChild(goodImage);
-    console.log("SUCCESSFUL CONNECTION");
-  } else {
-    badImage.src = `https://img.shields.io/badge/${parent.href}-offline-red.svg`
-    parent.appendChild(badImage);
-    console.log("COULD NOT CONNECT");
-  }};
-  xhr.send(null);
+    if (xhr.status === 200) {
+        goodImage.src = `https://img.shields.io/badge/${displayName}-online-brightgreen.svg`;
+        goodImage.style.visibility = "visible";
+        task.appendChild(goodImage);
 
-});
+    } else {
+        badImage.src = `https://img.shields.io/badge/${displayName}-offline-red.svg`;
+        task.appendChild(badImage);
+        badImage.style.visibility = "visible";
+    }};
+    xhr.send(null);
+ });
